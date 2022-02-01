@@ -33,3 +33,11 @@
 .vscode/launch.json
 .vscode/settings.json
 .vscode/tasks.json
+botBattle.cpp
+scratchpad.cpp
+test.cpp
+testBot.cpp
+mem_trace.log
+.vscode/launch.json
+.vscode/launch.json
+.vscode/tasks.json

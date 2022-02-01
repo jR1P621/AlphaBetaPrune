@@ -1,12 +1,11 @@
 #include <iostream>
-#include "src/Board.cpp"
-#include "src/Bot.cpp"
+#include "src/Mancala.cpp"
 
 using std::cin;
 
 int main(int argc, char const *argv[])
 {
-    Board myBoard = Board();
+    Mancala myBoard = Mancala();
     int selection;
     do
     {
