@@ -3,6 +3,8 @@
 
 /*
 Constructor
+size argument determines number of pits on a player's side NOT including store
+(Ex., size = 6 will make a board with a total of 14 pits: 6 on each side + 2 stores)
 */
 Mancala::Mancala(size_t size, unsigned int stones)
 {
@@ -132,7 +134,9 @@ void Mancala::makeValidMove(action_t pit)
     unsigned int endPit = distribute(pit);
     capture(endPit);
     endgame();
-    changeTurn();
+    if ((turn == 1 && endPit != store1) ||
+        (turn == 2 && endPit != store2))
+        changeTurn();
 }
 
 /*

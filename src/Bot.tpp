@@ -6,7 +6,8 @@ Manages threads and futures.  Calls ABSearch::Search.
 */
 template <class S, class A>
 A Bot<S, A>::getMove(ABSearchableState<S, A> *state, float (*utilityFunction)(ABSearchableState<S, A> *),
-                     unsigned int searchDepth, std::chrono::milliseconds thinkTime, float comparePrecision)
+                     unsigned int searchDepth, std::chrono::milliseconds thinkTime, float comparePrecision,
+                     bool (*maxLayerFunction)(ABSearchableState<S, A> *))
 {
     size_t maxThreads = std::thread::hardware_concurrency(); //get hardware capability
     std::vector<std::future<A>> futures;
@@ -31,7 +32,8 @@ A Bot<S, A>::getMove(ABSearchableState<S, A> *state, float (*utilityFunction)(AB
         for (int i = 0; i < maxThreads - f; i++)
         {
             futures.push_back(std::async(&ABSearch<S, A>::Search, state, utilityFunction,
-                                         searchDepth, thinkTime, startTime, comparePrecision));
+                                         searchDepth, thinkTime, startTime, comparePrecision,
+                                         maxLayerFunction));
             searchDepth++;
         }
     }

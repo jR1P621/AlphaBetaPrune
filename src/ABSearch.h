@@ -10,7 +10,9 @@ ABSearchableState classes.
 
 //Defaults
 const float DEFAULT_PRECISION = 0.001; //for checking float equality
-const int DEBUG_LEVEL = 0;             //1 for some console printing
+#ifndef DEBUG_LEVEL
+const int DEBUG_LEVEL = 0; //1 for some console printing
+#endif
 
 /*
 Custom exception for a timed out alpha-beta search.
@@ -48,17 +50,20 @@ public:
                     float (*utilityFunction)(ABSearchableState<S, A> *),
                     unsigned int maxDepth, std::chrono::milliseconds maxTime,
                     std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now(),
-                    float comparePrecision = DEFAULT_PRECISION);
+                    float comparePrecision = DEFAULT_PRECISION,
+                    bool (*maxLayerCheck)(ABSearchableState<S, A> *) = nullptr);
 
 private:
     static float minLayer(Node<ABSearchableState<S, A>, A> *node, float a, float b,
                           float (*utilityFunction)(ABSearchableState<S, A> *),
                           std::map<size_t, float> *visitedStates, unsigned int maxDepth,
-                          std::chrono::steady_clock::time_point startTime, std::chrono::milliseconds maxTime);
+                          std::chrono::steady_clock::time_point startTime, std::chrono::milliseconds maxTime,
+                          bool (*maxLayerCheck)(ABSearchableState<S, A> *));
     static float maxLayer(Node<ABSearchableState<S, A>, A> *node, float a, float b,
                           float (*utilityFunction)(ABSearchableState<S, A> *),
                           std::map<size_t, float> *visitedStates, unsigned int maxDepth,
-                          std::chrono::steady_clock::time_point startTime, std::chrono::milliseconds maxTime);
+                          std::chrono::steady_clock::time_point startTime, std::chrono::milliseconds maxTime,
+                          bool (*maxLayerCheck)(ABSearchableState<S, A> *));
 };
 
 #include "ABSearch.tpp"

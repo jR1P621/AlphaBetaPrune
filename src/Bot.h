@@ -21,7 +21,8 @@ public:
                      float (*utilityFunction)(ABSearchableState<S, A> *),
                      unsigned int searchDepth = DEFAULT_DEPTH,
                      std::chrono::milliseconds thinkTime = DEFAULT_TIME,
-                     float comparePrecision = DEFAULT_PRECISION);
+                     float comparePrecision = DEFAULT_PRECISION,
+                     bool (*maxLayerFunction)(ABSearchableState<S, A> *) = nullptr);
 };
 
 #include "Bot.tpp"

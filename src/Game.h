@@ -34,9 +34,10 @@ public:
         return Bot<S, A>::getMove(this, utilityFunction);
     };
     A getAIMove(float (*utilityFunction)(ABSearchableState<S, A> *),
+                bool (*maxLayerFunction)(ABSearchableState<S, A> *),
                 unsigned int searchDepth, std::chrono::milliseconds thinkTime)
     {
-        return Bot<S, A>::getMove(this, utilityFunction, searchDepth, thinkTime);
+        return Bot<S, A>::getMove(this, utilityFunction, searchDepth, thinkTime, DEFAULT_PRECISION, maxLayerFunction);
     };
 
     //getters/setters

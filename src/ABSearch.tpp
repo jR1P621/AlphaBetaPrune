@@ -15,7 +15,7 @@ A ABSearch<S, A>::Search(ABSearchableState<S, A> *rootState,
                          float (*utilityFunction)(ABSearchableState<S, A> *),
                          unsigned int maxDepth, std::chrono::milliseconds maxTime,
                          std::chrono::steady_clock::time_point startTime,
-                         float comparePrecision)
+                         float comparePrecision, bool (*maxLayerCheck)(ABSearchableState<S, A> *))
 {
     std::map<size_t, float> *visitedStates = new std::map<size_t, float>; //for tracking visited states
     Node<ABSearchableState<S, A>, A> *root =
@@ -24,7 +24,7 @@ A ABSearch<S, A>::Search(ABSearchableState<S, A> *rootState,
     {
         //Begin recursive search
         float value = maxLayer(root, FLT_MAX * -1, FLT_MAX, utilityFunction,
-                               visitedStates, maxDepth, startTime, maxTime);
+                               visitedStates, maxDepth, startTime, maxTime, maxLayerCheck);
 
         delete visitedStates; //clean up
         //Find best move
@@ -58,7 +58,8 @@ template <class S, class A>
 float ABSearch<S, A>::maxLayer(Node<ABSearchableState<S, A>, A> *node, float a, float b,
                                float (*utilityFunction)(ABSearchableState<S, A> *),
                                std::map<size_t, float> *visitedStates, unsigned int maxDepth,
-                               std::chrono::steady_clock::time_point startTime, std::chrono::milliseconds maxTime)
+                               std::chrono::steady_clock::time_point startTime, std::chrono::milliseconds maxTime,
+                               bool (*maxLayerCheck)(ABSearchableState<S, A> *))
 {
     //Check our runtime
     if (std::chrono::steady_clock::now() > startTime + maxTime)
@@ -89,8 +90,14 @@ float ABSearch<S, A>::maxLayer(Node<ABSearchableState<S, A>, A> *node, float a, 
             try
             {
                 //Continue recursive search
-                child->value = minLayer(child, a, b, utilityFunction,
-                                        visitedStates, maxDepth, startTime, maxTime);
+                if (maxLayerCheck == nullptr || !maxLayerCheck(child->state))
+                    child->value = minLayer(child, a, b, utilityFunction,
+                                            visitedStates, maxDepth, startTime,
+                                            maxTime, maxLayerCheck);
+                else
+                    child->value = maxLayer(child, a, b, utilityFunction,
+                                            visitedStates, maxDepth, startTime,
+                                            maxTime, maxLayerCheck);
             }
             //If exception, clean everything up at this node and pass exception up
             catch (...)
@@ -123,7 +130,8 @@ template <class S, class A>
 float ABSearch<S, A>::minLayer(Node<ABSearchableState<S, A>, A> *node, float a, float b,
                                float (*utilityFunction)(ABSearchableState<S, A> *),
                                std::map<size_t, float> *visitedStates, unsigned int maxDepth,
-                               std::chrono::steady_clock::time_point startTime, std::chrono::milliseconds maxTime)
+                               std::chrono::steady_clock::time_point startTime, std::chrono::milliseconds maxTime,
+                               bool (*maxLayerCheck)(ABSearchableState<S, A> *))
 {
     if (std::chrono::steady_clock::now() > startTime + maxTime)
     {
@@ -147,8 +155,15 @@ float ABSearch<S, A>::minLayer(Node<ABSearchableState<S, A>, A> *node, float a, 
 
             try
             {
-                child->value = maxLayer(child, a, b, utilityFunction,
-                                        visitedStates, maxDepth, startTime, maxTime);
+                //Continue recursive search
+                if (maxLayerCheck == nullptr || maxLayerCheck(child->state))
+                    child->value = maxLayer(child, a, b, utilityFunction,
+                                            visitedStates, maxDepth, startTime,
+                                            maxTime, maxLayerCheck);
+                else
+                    child->value = minLayer(child, a, b, utilityFunction,
+                                            visitedStates, maxDepth, startTime,
+                                            maxTime, maxLayerCheck);
             }
             catch (ABTimeout e)
             {

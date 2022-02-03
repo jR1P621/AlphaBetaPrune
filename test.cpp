@@ -1,25 +1,25 @@
 #include <iostream>
-#include "src/Mancala.cpp"
+#include "src/Checkers.h"
 
 using std::cin;
 
 int main(int argc, char const *argv[])
 {
-    Mancala myBoard = Mancala();
+    Checkers myBoard = Checkers();
     int selection;
-    do
-    {
-        myBoard.print();
-        cout << "Select Pit: ";
-        cin >> selection;
-        try
-        {
-            myBoard.makeMove(selection);
-        }
-        catch (invalid_argument e)
-        {
-            printf("%s\n", e.what());
-        }
-    } while (myBoard.getWinner() < 0);
+    // do
+    // {
+    //     myBoard.print();
+    //     cout << "Select Pit: ";
+    //     cin >> selection;
+    //     try
+    //     {
+    //         myBoard.makeMove(selection);
+    //     }
+    //     catch (invalid_argument e)
+    //     {
+    //         printf("%s\n", e.what());
+    //     }
+    // } while (myBoard.getWinner() < 0);
     myBoard.print();
 }

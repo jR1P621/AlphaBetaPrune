@@ -1,3 +1,7 @@
+/*
+Shows basic Mancala functionality.  Let's a human play against the computer in the console.
+*/
+
 #include <iostream>
 #include <random>
 #include "src/Mancala.h"
@@ -13,11 +17,11 @@ using std::chrono::milliseconds;
 
 Mancala *myBoard;
 float utility1(Mancala *game, int position);
+bool maxLayerFunction(Mancala *game, int position);
 
 int main(int argc, char const *argv[])
 {
     myBoard = new Mancala();
-    myBoard->setTurn(1);
     int move;
     do
     {
@@ -31,7 +35,10 @@ int main(int argc, char const *argv[])
         {
             move = myBoard->getAIMove([](auto *game)
                                       { return utility1((Mancala *)game, 2); },
-                                      (unsigned int)5, (milliseconds)5000);
+                                      [](auto *game)
+                                      { return maxLayerFunction((Mancala *)game, 2); },
+                                      (unsigned int)5,
+                                      (milliseconds)5000);
         }
         try
         {
@@ -49,12 +56,18 @@ int main(int argc, char const *argv[])
 float utility1(Mancala *game, int position)
 {
     float utility = (float)game->getPlayer1Score() - (float)game->getPlayer2Score();
-    float variation = 0.5;
-    utility += (float)rand() / RAND_MAX / (1 / variation) - variation;
     utility += ((float)game->getState(game->getSize() - 2) + (float)game->getState(game->getSize() - 3) / 2) -
                ((float)game->getState(game->getSize() / 2 - 2) + (float)game->getState(game->getSize() / 2 - 3) / 2) / 2;
+    float variation = 0.5;
+    utility += (float)rand() / RAND_MAX / (1 / variation) - variation;
+
     if (position == 2)
         return utility *= -1;
     else
         return utility;
+}
+
+bool maxLayerFunction(Mancala *game, int position)
+{
+    return game->getTurn() == position;
 }
